@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <title>Contact Form - PHP/MySQL Demo Code</title>
+    </head>
+<body>
+
+<nav class="navbar navbar-light bg-light">
+  <span class="navbar-brand mb-0 h1">MobileTicker</span>
+</nav>
+
+<fieldset>
+<br>
+<div class="container h-100 d-flex justify-content-center bg-dark text-white">
+<center>
+
+<Legend>Login to MobileTicker</Legend>
+<form name="frmTest" method="post" action="logincommand.php">
+<p>
+    <label for="First Name">Email</label>
+    <input type="text" name="txtEmail" id="txtEmail"> 
+</p>
+<p>
+    <label for="Last Name">Password</label>
+    <input type="password" name="txtPassword" id="txtLast"> 
+</p>
+<label for="New Account"><a href="signup.html">Create a New Account</href></label>
+<p>
+    <input type="submit" name="Submit" id="Submit" value="Login">
+</p>
+<p>
+<span class="invalid_feedback"><?php echo $login_err; ?></span>
+</p>
+</form>
+
+</center>
+</div>
+</fieldset>
+
+</body>
+</html>
