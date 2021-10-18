@@ -81,6 +81,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 </head>
     <nav class="navbar navbar-light bg-light">
   <span class="navbar-brand mb-0 h1"><a onclick="openNav()">MobileTicker</a></span>
+  <span class="btn btn-warning ml-3" ><a href="welcome.php">Refresh</a></span>
     <span class="btn btn-danger ml-3" ><a href="logout.php">Log Out</a></span>
 </nav>
 <div id="mySidenav" class="sidenav">
@@ -94,16 +95,16 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <body>
 <p>Welcome to MobileTicker <?php echo $_SESSION["username"]?> with user ID <?php echo $_SESSION["id"]?></p>
 <br>
-<p>Your current added symbols:</p>
 <center>
 <?php
+$totalvalue = 0;
 require_once "config.php";
 //Make a query to obtain all stocks associated with the session ID.
 $query = "SELECT * FROM stocks WHERE userID = {$_SESSION["id"]}";
 if($result = $link->query($query)){
 //Fetch the associated data
 echo "<table class='tg'><thead>";
-echo "<tr><th>Ticker Symbol:</th><th>Stock Name:</th><th>Amount of Shares:</th><th>Date Purchased:</th><th>Current Price:</th><th>Percent Change Today:</th></tr></thead>";
+echo "<tr><th>Ticker Symbol:</th><th>Stock Name:</th><th>Amount of Shares:</th><th>Date Purchased:</th><th>Current Price:</th><th>Percent Change Today:</th><th></th></tr></thead>";
 
 while($row = $result->fetch_assoc()){
 $ticker = $row["symbol"];
@@ -112,12 +113,18 @@ $jsonData = file_get_contents($url);
 $formatted_jsonData = json_decode($jsonData, true);
 $shortname = $formatted_jsonData["quoteResponse"]["result"][0]["shortName"];
 $askprice = $formatted_jsonData["quoteResponse"]["result"][0]["ask"];
+//Check the ask price is not 0 and if it is use the previous weekly close
+if ($askprice == 0){
+  $askprice = $formatted_jsonData["quoteResponse"]["result"][0]["regularMarketPrice"];
+}
 $pctChange = round($formatted_jsonData["quoteResponse"]["result"][0]["regularMarketChangePercent"],2);
 $id = $row["id"];
+$totalvalue += $askprice * $row["amount"];
 echo "<tr><td class='tg-0lax'>{$row["symbol"]}</td><td class='tg-0lax'>{$shortname}</td><td class='tg-0lax'>{$row["amount"]}</td><td>{$row["dateadded"]}</td><td>{$askprice}</td><td>{$pctChange}%</td><td><a href='deletecommand.php?id={$id}'>DELETE</a></td></tr>";
 }
 echo "</table>";
 mysqli_close($link);
+echo "<br> Total portfolio Value is {$totalvalue}";
 }
 ?>
 </center>
