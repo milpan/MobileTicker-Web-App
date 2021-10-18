@@ -1,10 +1,8 @@
-|----------------------------------------------------------|
-Mobile Ticker Web Application
+# Mobile Ticker Web Application
 This web application was made as a test to using a PHP
 interface with a MySQL Backend. Information such as the
 name and price is parsed from Yahoo Finance.
-|----------------------------------------------------------|
-TO SET UP:
+## TO SET UP:
 Requires a  Apache Web Server with PHP Installed
 Use Config.php in the root and tools directory, configuring
 this to a MYSQL Server.
