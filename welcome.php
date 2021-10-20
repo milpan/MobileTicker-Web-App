@@ -1,7 +1,8 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <?php
 // Initialize the session
 session_start();
-
+$listsectors = array();
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: test.html");
@@ -16,7 +17,9 @@ function draw_Table(){
   }
 
 include_once "config.php";
+include_once "tools/sectorcalculation.php";
 $totalvalue = 0;
+
 //Check the Value of The dropdown list2
 //Make a query to obtain all stocks associated with the session ID.
 if($userchoice == "All" || $userchoice == null){
@@ -36,6 +39,9 @@ $jsonData = file_get_contents($url);
 $formatted_jsonData = json_decode($jsonData, true);
 $shortname = $formatted_jsonData["quoteResponse"]["result"][0]["shortName"];
 $askprice = $formatted_jsonData["quoteResponse"]["result"][0]["ask"];
+$sector = $row["sector"];
+//Add the relevant sector to the list allowing us to plot
+$listsectors[] = $sector;
 //Check the ask price is not 0 and if it is use the previous weekly close
 if ($askprice == 0){
   $askprice = $formatted_jsonData["quoteResponse"]["result"][0]["regularMarketPrice"];
@@ -46,13 +52,16 @@ $totalvalue += $askprice * $row["amount"];
 echo "<tr><td class='tg-0lax'>{$row["symbol"]}</td><td class='tg-0lax'>{$shortname}</td><td class='tg-0lax'>{$row["amount"]}</td><td>{$row["dateadded"]}</td><td>{$askprice}</td><td>{$pctChange}%</td><td>{$row["sector"]}</td><td><a href='deletecommand.php?id={$id}'>DELETE</a><td><a href='editcommand.php?id={$id}'>EDIT</a></td></tr>";
 }
 echo "</table>";
+//Prepare the JSON File used to chart the sector information
+global $sectorJson;
+$sectorJson = json_encode(spit_sectors_toJson($listsectors));
 mysqli_close($link);
 }
 }
 
 
 ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
 
 <style>
 .sidenav {
@@ -178,33 +187,41 @@ draw_Table();
 ?>
 </center>
 </div>
-<canvas id="line-chart" width="800" height="450"></canvas>
+<canvas id="pie-chart" width="400" height="100"></canvas>
 <script>
-  /*
-  new Chart(document.getElementById("line-chart"), {
-    type: 'line',
+    var labellist = [];
+    var amount = [];
+    var test = JSON.parse('<?= $sectorJson; ?>');
+    for(let i=0; i<test.length; i++){
+      labellist[i] = test[i].name;
+      amount[i] = test[i].allocation;
+    }
+    console.log(labellist);
+    </script>
+  <script>
+  new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
     data: {
-      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
-      datasets: [
-        {
-          label: "Population (millions)",
-          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-          data: [2478,5267,734,784,433]
-        }
-      ]
+      labels: labellist,
+      datasets: [{
+        label: "Population (millions)",
+        backgroundColor: ["#2c3e50", "#7831d0","#3f3718","#ac5a3a","#1973f0", "#12e687", "#f63d87", "#be2c25", "#54715a", "#2b0e5d", "#d5d47d", "#44298e", "#56c664", "#200e99", "#31946e", "#dc7314"],
+        data: amount
+      }]
     },
     options: {
-      legend: { display: false },
       title: {
         display: true,
-        text: 'Predicted world population (millions) in 2050'
+        text: 'Sector Allocation'
       }
     }
 });
-*/
-  </script>
+</script>
 </body>
 <script>
+  
+
+
 window.onload = function openNav() {
   document.getElementById("mySidenav").style.width = "15%";
 }
