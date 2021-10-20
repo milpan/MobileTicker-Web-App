@@ -1,0 +1,1 @@
+To generate QR Codes, PHPQRCode was used to allow the mobile version of the app to link with the database.

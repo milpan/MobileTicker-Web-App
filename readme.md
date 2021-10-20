@@ -9,3 +9,12 @@ this to a MYSQL Server.
 Two SQL Files are provided to set up the database with the 
 table names 'users' for login information and 'stocks' for
 holding the stock data.
+## Requirements
+This package requires composer installed and the QR Library which
+can be installed by the command.
+
+Remember to enable the extension gd (or gd2 depending on PHP Version)
+in the php.ini config file.
+```
+composer require chillerlan/php-qrcode
+```

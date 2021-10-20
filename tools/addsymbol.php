@@ -5,6 +5,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 //Check the user is infact logged in
 $ticker = trim($_POST['tickersymbol']);
 $amount = trim($_POST['amountof']);
+$sector = $_POST['sector'];
+
 $allgood = 0;
 
 //Check that the Ticker Symbol and Amount of stock entered is not empty
@@ -28,9 +30,9 @@ exit;
 	}
 		if($allgood==1){
 
-			$sql2 = "INSERT INTO stocks (symbol, amount, userID) VALUES (?, ?, ?)";
+			$sql2 = "INSERT INTO stocks (symbol, amount, userID, sector) VALUES (?, ?, ?, ?)";
 				if($stmt = mysqli_prepare($link, $sql2)){
-					$stmt->bind_param("sdi", $bind_ticker, $bind_amount, $bind_SESSIONID);
+					$stmt->bind_param("sdis", $bind_ticker, $bind_amount, $bind_SESSIONID, $sector);
 					//Redirect back to the main page
 					$bind_ticker = trim($ticker);
 					$bind_amount = trim($amount);
@@ -64,6 +66,7 @@ exit;
 
 <nav class="navbar navbar-light bg-light">
   <span class="navbar-brand mb-0 h1">MobileTicker</span>
+  <span class="btn btn-danger ml-3" ><a href="../welcome.php">Back</a></span>
 </nav>
 
 <fieldset>
@@ -73,12 +76,33 @@ exit;
 <Legend>Add a stock to the portfolio:</Legend>
 <form name="frmTest" method="post">
 <p>
-    <label for="First Name">Ticker Symbol:</label>
+    <label for="Name of Ticker">Ticker Symbol:</label>
     <input type="text" name="tickersymbol" id="tickersymbol"> 
 </p>
 <p>
-    <label for="Last Name">Amount</label>
+    <label for="Amount of Shares">Amount</label>
     <input type="number" name="amountof" id="amountof"> 
+</p>
+<label for="Sector Information">Corrosponding Sector:</label>
+<p>
+    <select class="form-select" size="7" aria-label="size 7 select example" name="sector" id="sector">
+  	<option value="Air Travel">Air Travel</option>
+  	<option value="Basic Materials">Basic Materials</option>
+  	<option value="Communication Services">Communication Services</option>
+  	<option value="Conglomerates">Conglomerates</option>
+	<option value="Consumer Cyclical">Consumer Cyclical</option>
+  	<option value="Consumer Defensive">Consumer Defensive</option>
+  	<option value="Energy">Energy</option>
+	<option value="Financial">Financial</option>
+  	<option value="Financial Services">Financial Services</option>
+  	<option value="Healthcare">Healthcare</option>
+  	<option value="Industrial Goods">Industrial Goods</option>
+	<option value="Industrials">Industrials</option>
+  	<option value="Real Estate">Real Estate</option>
+  	<option value="Services">Services</option>
+  	<option value="Technology">Technology</option>
+  	<option value="Utilities">Utilities</option>
+</select>
 </p>
 <p>
     <input type="submit" name="Submit" id="Submit" value="Add this symbol to the portfolio">
