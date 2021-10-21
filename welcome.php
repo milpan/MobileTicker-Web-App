@@ -1,4 +1,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 <?php
 // Initialize the session
 session_start();
@@ -81,7 +85,7 @@ mysqli_close($link);
 .sidenav a {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 21px;
   color: #818181;
   display: block;
   transition: 0.3s;
@@ -134,25 +138,54 @@ mysqli_close($link);
         body{ font: 14px sans-serif; text-align: center; }
     </style>
 </head>
-    <nav class="navbar navbar-light bg-light">
-  <span class="navbar-brand mb-0 h1"><a onclick="openNav()">MobileTicker</a></span>
-  <div></div>
-  <span><p class="text-right"><?php echo $_SESSION["username"]?></p></span>
-    <span class="btn btn-danger ml-3" ><a href="logout.php">Log Out</a></span>
-</nav>
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <a href="welcome.php">Portfolio</a>
   <a href="tools/addsymbol.php">Add New Item</a>
+  <a href="#">Sector Breakdown</a>
   <a href="tools/qrcode.php">Link to Mobile</a>
-  <a href="#">Contact</a>
 </div>
 
 <body>
-<p>Welcome to MobileTicker</p>
-<br>
-<div class="float-right">
-  <form name="sectorSelect" action="welcome.php" method="POST">
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-dark bg-dark">
+				 
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="navbar-toggler-icon"></span>
+				</button> <a class="navbar-brand" href="#" onclick="openNav()">☰ MobileTicker Web</a>
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="navbar-nav">
+						<li class="nav-item active">
+							 <a class="nav-link" href="#">Portfolio <span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							 <a class="nav-link" href="#">Trending</a>
+						</li>
+					</ul>
+					<ul class="navbar-nav ml-md-auto">
+						<li class="nav-item dropdown">
+							 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"><?php echo $_SESSION["username"]?></a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+								 <a class="dropdown-item" href="#">My Account</a>
+								<div class="dropdown-divider">
+								</div> <a class="dropdown-item" href="logout.php">Log Out</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<div class="dropdown dropup">
+      <div class="float-right">
+</div>
+<br><br>
+<center>
+<div class="container-fluid">
+  <table>
+    <tr style="vertical-align:top"><td>
+      <div style="margin-left: auto;">
+    <form name="sectorSelect" action="welcome.php" method="POST">
   <select id="sectorview" name="sectorview" onchange="this.form.submit()">
   <option>Sort by Sector</option>
   <option value="All">All</option>
@@ -173,21 +206,18 @@ mysqli_close($link);
   <option value="Technology">Technology</option>
   <option value="Utilities">Utilities</option> 
 </select>
-&nbsp;
-</form>
 </div>
-<br>
-<br>
-<div class="container-fluid">
-<center>
-<?php
-//On screen open drawn the portfolio for all the stocks
-draw_Table();
-
-?>
+</form>
+    <?php
+    //On screen open drawn the portfolio for all the stocks
+    draw_Table();
+    ?>
+    </td><td>
+<canvas id="pie-chart" width="400" height="300"></canvas>
+    </td></tr>
+</table>
 </center>
 </div>
-<canvas id="pie-chart" width="400" height="100"></canvas>
 <script>
     var labellist = [];
     var amount = [];
@@ -219,15 +249,9 @@ draw_Table();
 </script>
 </body>
 <script>
-  
-
-
-window.onload = function openNav() {
-  document.getElementById("mySidenav").style.width = "15%";
-}
 
 function openNav() {
-  document.getElementById("mySidenav").style.width = "15%";
+  document.getElementById("mySidenav").style.width = "12%";
 }
 
 /* Set the width of the side navigation to 0 */
