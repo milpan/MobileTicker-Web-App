@@ -7,12 +7,16 @@
 // Initialize the session
 session_start();
 $listsectors = array();
-$allocation = array();
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: test.html");
     exit;
 }
+
+function obtainHistoricalData(){
+
+}
+
 
 function draw_Table(){
   if(isset($_POST['sectorview'])){
@@ -22,7 +26,6 @@ function draw_Table(){
   }
 
 include_once "config.php";
-include_once "tools/sectorcalculation.php";
 $totalvalue = 0;
 
 //Check the Value of The dropdown list2
@@ -36,9 +39,8 @@ if($result = $link->query($query)){
 //Fetch the associated data
 echo "<table class='tg'><thead>";
 echo "<tr><th>Ticker Symbol:</th><th>Stock Name:</th><th>Amount of Shares:</th><th>Date Purchased:</th><th>Current Price:</th><th>Percent Change Today:</th><th>Sector</th><th></th><th></th></tr></thead>";
-$i = 0;
+
 while($row = $result->fetch_assoc()){
-$i += 1;
 $ticker = $row["symbol"];
 $url = "https://query1.finance.yahoo.com/v7/finance/quote?lang=en-US&region=US&corsDomain=finance.yahoo.com&symbols={$ticker}";
 $jsonData = file_get_contents($url);
@@ -46,14 +48,12 @@ $formatted_jsonData = json_decode($jsonData, true);
 $shortname = $formatted_jsonData["quoteResponse"]["result"][0]["shortName"];
 $askprice = $formatted_jsonData["quoteResponse"]["result"][0]["ask"];
 $sector = $row["sector"];
-$amount = $row["amount"];
 //Add the relevant sector to the list allowing us to plot
 $listsectors[] = $sector;
 //Check the ask price is not 0 and if it is use the previous weekly close
 if ($askprice == 0){
   $askprice = $formatted_jsonData["quoteResponse"]["result"][0]["regularMarketPrice"];
 }
-$allocation[] = $askprice * $amount;
 $pctChange = round($formatted_jsonData["quoteResponse"]["result"][0]["regularMarketChangePercent"],2);
 $id = $row["id"];
 $totalvalue += $askprice * $row["amount"];
@@ -62,16 +62,13 @@ echo "<tr><td class='tg-0lax'>{$row["symbol"]}</td><td class='tg-0lax'>{$shortna
 echo "</table>";
 //Prepare the JSON File used to chart the sector information
 global $sectorJson;
-//Render the information if the query is not NULL
-if($i != 0){$sectorJson = json_encode(spit_sectors_toJson($listsectors, $allocation));}
-
+$sectorJson = json_encode(spit_sectors_toJson($listsectors));
 mysqli_close($link);
 }
 }
 
 
 ?>
-
  
 <!DOCTYPE html>
 <html lang="en">
@@ -82,7 +79,7 @@ mysqli_close($link);
     <style>
         body{ font: 14px sans-serif; text-align: center; }
     </style>
-    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="../style/main.css">
 </head>
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -103,14 +100,14 @@ mysqli_close($link);
 				</button> <a class="navbar-brand" href="#" onclick="openNav()">☰ MobileTicker Web</a>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="navbar-nav">
-						<li class="nav-item active">
-							 <a class="nav-link" href="#">Portfolio <span class="sr-only">(current)</span></a>
-						</li>
 						<li class="nav-item">
-							 <a class="nav-link" href="tools/performance.php">Performance</a>
+							 <a class="nav-link" href="../welcome.php">Portfolio</a>
+						</li>
+						<li class="nav-item active">
+							 <a class="nav-link" href="#">Performance<span class="sr-only">(current)</span></a>
 						</li>
             <li>
-            <a class="nav-link" href="tools/calendar.php">Calendar</a>
+            <a class="nav-link" href="calendar.php">Calendar</a>
           </li>
 					</ul>
 					<ul class="navbar-nav ml-md-auto">
@@ -119,7 +116,7 @@ mysqli_close($link);
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
 								 <a class="dropdown-item" href="#">My Account</a>
 								<div class="dropdown-divider">
-								</div> <a class="dropdown-item" href="logout.php">Log Out</a>
+								</div> <a class="dropdown-item" href="../logout.php">Log Out</a>
 							</div>
 						</li>
 					</ul>
@@ -129,78 +126,25 @@ mysqli_close($link);
       <div class="float-right">
 </div>
 <br><br>
-<center>
-<div class="container-fluid">
-  <table>
-    <tr style="vertical-align:top"><td>
-      <div style="margin-left: auto;">
-    <form name="sectorSelect" action="welcome.php" method="POST">
-  <select id="sectorview" name="sectorview" onchange="this.form.submit()">
-  <option>Sort by Sector</option>
-  <option value="All">All</option>
-  <option value="Air Travel">Air Travel</option>
-  <option value="Basic Materials">Basic Materials</option>
-  <option value="Communication Services">Communication Services</option>
-  <option value="Conglomerates">Conglomerates</option>
-	<option value="Consumer Cyclical">Consumer Cyclical</option>
-  <option value="Consumer Defensive">Consumer Defensive</option>
-  <option value="Energy">Energy</option>
-	<option value="Financial">Financial</option>
-  <option value="Financial Services">Financial Services</option>
-  <option value="Healthcare">Healthcare</option>
-  <option value="Industrial Goods">Industrial Goods</option>
-	<option value="Industrials">Industrials</option>
-  <option value="Real Estate">Real Estate</option>
-  <option value="Services">Services</option>
-  <option value="Technology">Technology</option>
-  <option value="Utilities">Utilities</option> 
-</select>
+<div class="flex-container">
+<div class="card purple" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Build your portfolio</h5>
+    <p class="card-text">You can start adding stocks and products to your portfolio to analyse performance metrics.</p>
+    <a href="addsymbol.php" class="btn btn-primary">Add a symbol</a>
+  </div>
 </div>
-</form>
-    <?php
-    //On screen open drawn the portfolio for all the stocks
-    draw_Table();
-    ?>
-    </td><td>
-<canvas id="pie-chart" width="400" height="300"></canvas>
-    </td></tr>
-</table>
-</center>
+  <div>2</div>
 </div>
-<script>
-    var labellist = [];
-    var amount = [];
-    var test = JSON.parse('<?= $sectorJson; ?>');
-    for(let i=0; i<test.length; i++){
-      labellist[i] = test[i].name;
-      amount[i] = test[i].allocation;
-    }
-    console.log(labellist);
-    </script>
-  <script>
-  new Chart(document.getElementById("pie-chart"), {
-    type: 'pie',
-    data: {
-      labels: labellist,
-      datasets: [{
-        label: "Population (millions)",
-        backgroundColor: ["#2c3e50", "#7831d0","#3f3718","#ac5a3a","#1973f0", "#12e687", "#f63d87", "#be2c25", "#54715a", "#2b0e5d", "#d5d47d", "#44298e", "#56c664", "#200e99", "#31946e", "#dc7314"],
-        data: amount
-      }]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Sector Allocation'
-      }
-    }
-});
-</script>
+
+
+
+
 </body>
 <script>
 
 function openNav() {
-  document.getElementById("mySidenav").style.width = "13%";
+  document.getElementById("mySidenav").style.width = "12%";
 }
 
 /* Set the width of the side navigation to 0 */

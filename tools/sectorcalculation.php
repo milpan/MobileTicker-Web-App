@@ -1,6 +1,7 @@
 <?php
 //Sector data global variable
 global $sectordata;
+require_once "config.php";
 $sectordata = array(
     array("name" => "Air Travel",
     "allocation" => 0
@@ -58,15 +59,22 @@ return null;
 }
 
 //Function to calculate the allocations into each sector
-function spit_sectors_toJson($listofSectorData){
+function spit_sectors_toJson($listofSectorData, $allocation){
     global $sectordata;
+    /*Make a query to the database to obtain a List of Sector Information
+    and total amount allocated.
+    */
+
+
     //$listofSectorData -> List populated with the sector of each stock
     foreach($listofSectorData as $sectorRow){
+        $i = 0;
         $outid = search_multidim_array($sectorRow, $sectordata);
         if($outid === null){
         echo "Error while calculating sector information";
         } else{
-        $sectordata[$outid]["allocation"] += 1;
+        $sectordata[$outid]["allocation"] += $allocation[$i];
+        $i += 1;
         }
     }
     return $sectordata;
