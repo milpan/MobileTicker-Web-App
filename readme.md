@@ -13,12 +13,7 @@ holding the stock data.
 This package requires composer installed and the QR Library which
 can be installed by the command.
 
-This package also requires Version 6+ of NodeJS in order to properly
-for npm - for the calendar extension tui.calendar.
-
-```
-npm install --save tui-calendar
-```
+This package also requires Version 6+ of NodeJS in order to properly function.
 
 Remember to enable the extension gd (or gd2 depending on PHP Version)
 in the php.ini config file.

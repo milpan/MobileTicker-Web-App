@@ -7,6 +7,7 @@
 // Initialize the session
 session_start();
 $listsectors = array();
+global $allocation;
 $allocation = array();
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -24,7 +25,7 @@ function draw_Table(){
 include_once "config.php";
 include_once "tools/sectorcalculation.php";
 $totalvalue = 0;
-
+global $allocation;
 //Check the Value of The dropdown list2
 //Make a query to obtain all stocks associated with the session ID.
 if($userchoice == "All" || $userchoice == null){

@@ -134,11 +134,21 @@ mysqli_close($link);
 </div>
 <br><br>
 <div class="flex-container">
-  <div align="right">
-<a class="btn btn-primary" onclick="calendar.prev();"><</a>
-<a class="btn btn-primary" onclick="calendar.today();">Today</a>
-<a class="btn btn-primary" onclick="calendar.next();">></a>
-</div>
+  <table width="100%">
+    <tr>
+      <td>Current Week Selected:
+      <p id="currentweek">
+      </p>
+
+      </td>
+      <td>  <div align="right">
+<a class="btn btn-primary" onclick="previous_date();"><</a>
+<a class="btn btn-primary" onclick="next_date();">Today</a>
+<a class="btn btn-primary" onclick="next_date();">></a>
+</div></td>
+</tr>
+</table>
+
 <div id="calendar" style="height: 800px;"></div>
 </div>
 <?php obtain_dividendinfo() ?>
@@ -149,6 +159,21 @@ mysqli_close($link);
 //Obtain the dividend data from PHP
 var test = JSON.parse('<?= $dividendfinal; ?>');
 var names = JSON.parse(`<?= $formatted_stockname; ?>`);
+
+function previous_date(){
+  calendar.prev();
+  document.getElementById("currentweek").innerHTML = calendar.getDate().toUTCString();
+}
+
+function next_date(){
+  calendar.next();
+  document.getElementById("currentweek").innerHTML = calendar.getDate().toUTCString();
+}
+
+function today(){
+  calendar.today();
+  document.getElementById("currentweek").innerHTML = calendar.getDate().toUTCString();
+}
 
 //var Calendar = require('tui-calendar'); /* CommonJS */
 var calendar = new tui.Calendar(document.getElementById('calendar'), {
@@ -190,7 +215,9 @@ var calendar = new tui.Calendar(document.getElementById('calendar'), {
         narrowWeekend: true
     }
 });
+//Change the view of the calendar to a month view and display the targetted date
 calendar.changeView('month', true);
+document.getElementById("currentweek").innerHTML = calendar.getDate().toUTCString();
 
 //Populate the Calendar with the dividend dates from PHP
 var calendar_it = 1;

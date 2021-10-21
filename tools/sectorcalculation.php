@@ -44,6 +44,12 @@ $sectordata = array(
     ),
     array("name" => "Services",
     "allocation" => 0
+    ),
+    array("name" => "Technology",
+    "allocation" => 0
+    ),
+    array("name" => "Utilities",
+    "allocation" => 0
     )
     );
 
@@ -65,10 +71,9 @@ function spit_sectors_toJson($listofSectorData, $allocation){
     and total amount allocated.
     */
 
-
+    $i = 0;
     //$listofSectorData -> List populated with the sector of each stock
     foreach($listofSectorData as $sectorRow){
-        $i = 0;
         $outid = search_multidim_array($sectorRow, $sectordata);
         if($outid === null){
         echo "Error while calculating sector information";
